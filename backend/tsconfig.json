@@ -27,6 +27,6 @@
     /* DX */
     "removeComments": true
   },
-  "include": ["src"],
+  "include": ["src", "src/prisma/client.ts"],
   "exclude": ["node_modules", "dist"]
 }

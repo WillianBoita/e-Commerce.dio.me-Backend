@@ -1,10 +1,7 @@
-import express from 'express';
-import cors from 'cors';
-import router from './routes/routes'
+import app from './app'
 
-const server = express();
+const PORT = process.env.PORT || 8000
 
-server.use(express.json());
-server.use(cors());
-
-server.use('/api', router)
+app.listen(PORT, () => {
+  console.log(`Servidor rodando em localhost:${PORT}`)
+})
