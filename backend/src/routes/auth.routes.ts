@@ -8,5 +8,6 @@ const authService = new AuthService()
 const authController = new AuthController(authService)
 
 router.post('/signup', authController.signup)
+router.post('/login', authController.login)
 
 export default router;

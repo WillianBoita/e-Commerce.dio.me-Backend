@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../prisma/client';
 import { env } from '../config/env';
+import { generateToken } from '../utils/generateToken';
 
 export class AuthService {
   async signup(name: string, email: string, password: string) {
@@ -10,13 +11,9 @@ export class AuthService {
       throw new Error('JWT_SECRET not defined')
     }
     
-    console.log(email)
-    // problema aqui
     const userExists = await prisma.user.findUnique({
       where: { email }
     });
-
-    console.log(userExists)
 
     if(userExists) {
       throw new Error('User already exists');
@@ -33,8 +30,32 @@ export class AuthService {
     })
 
 
-    const token = jwt.sign({ userId: user.id }, env.JWT_SECRET, {expiresIn: '2h'})
+    const token = generateToken(user.id)
 
     return { token }
   }
+
+  async login(email: string, password: string) {
+    const user = await prisma.user.findUnique({
+      where: { email }
+    });
+  
+    if (!user) {
+      throw new Error('Incorrect credentials');
+    }
+  
+    const passwordMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
+  
+    if (!passwordMatch) {
+      throw new Error('Incorrect credentials');
+    }
+  
+    const token = generateToken(user.id)
+
+    return { user, token };
+  }
+  
 }
